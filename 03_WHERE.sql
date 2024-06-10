@@ -136,3 +136,140 @@ AND와 OR 연산의 우선순위
 select 1 or 0 and 0;
 -- 1 or 0 이 먼저 연산되므로 두번째 연산 1 AND 0 => 0
 select (1 or 0) and 0;
+
+select
+    *
+from
+    tbl_menu
+where
+    category_code = 4 or
+    menu_price = 9000 and
+    menu_code > 10;
+-- 모든 컬럼들을 조회해 오는데, 카테고리 코드가 4이고,
+
+-- BETWEEN 연산자를 사용한 WHERE
+select
+    menu_name,
+    menu_price,
+    category_code
+from
+    tbl_menu
+where
+    menu_price >= 10000 and -- 메뉴 가격이 10000원 이상
+    menu_price <= 25000;    -- 메뉴 가격이 25000원 이하
+
+/*
+BETWEEN 연산자
+- 경계값을 포함하고 사이의 값을 포함한다.
+BETWEEN 사용법
+[column_name] BETWEEN [A] and [B]
+*/
+select
+    menu_name,
+    menu_price,
+    category_code
+from
+    tbl_menu
+where
+    menu_price between 10000 and 25000; -- 메뉴 가격이 10000이상 25000 이하
+
+-- BETWEEN의 부정표현
+-- 경계값을 포함하지 않는다.
+select
+    menu_name,
+    menu_price,
+    category_code
+from
+    tbl_menu
+where
+    menu_price not between 10000 and 25000;
+-- 메뉴 가격이 10000이상 25000 이하가 아닌 데이터만 조회
+
+/*
+LIKE 연산자
+- 특정 패턴과 일치하는 행을 검색해준다.
+
+패턴
+- % : 0개 이상의 문자를 의미한다.
+ex) '%apple%' 는 apple이 포함된 모든 문자열을 의미한다.
+
+- _ : 1개의 문자를 나타낸다.
+ex) 'a_k' 는 'a'로 시작하고 'k'로 끝나는 세글자 문자열을 의미한다.
+*/
+select
+    *
+from
+    tbl_menu
+where
+    menu_name like '민트___';
+
+/*
+menu에서 '갈치' 라는 단어가 들어간 메뉴를 찾아보세요
+*/
+select
+    *
+from
+    tbl_menu
+where
+    menu_name like '%갈치%';
+
+-- LIKE 부정표현
+select
+    *
+from
+    tbl_menu
+where
+    menu_name not like '%갈치%';
+
+/*
+IN 연산자
+- 특정 열의 값이 지정된 목록 중 하나와 일치하는지 확인하는데 사용된다.
+
+IN 사용법
+[column_name] in (4, 5, 6, ...)
+*/
+select
+    menu_name,
+    category_code
+from
+    tbl_menu
+where
+    category_code in (4, 5, 6);
+-- category_code가 (4,5,6) 목록중에 있는 데이터만 조회해줘
+
+
+-- IN 연산자의 부정푠현
+select
+    menu_name,
+    category_code
+from
+    tbl_menu
+where
+    category_code not in(4, 5, 6);
+-- category_code가 (4,5,6) 목록중에 없는 데이터만 조회해줘
+
+/*
+IS NULL 연산자
+-- 값이 null인지 아닌지를 확인하여 조회한다.
+*/
+select
+    category_code,
+    category_name,
+    ref_category_code
+from
+    tbl_category
+where
+    ref_category_code is null;
+-- ref_category_code가 null인 데이터만 조회해줘
+
+
+-- IS NULL 연산자의 부정표현
+select
+category_code,
+    category_name,
+    ref_category_code
+from
+    tbl_category
+where
+    ref_category_code is not null;
+-- ref_category_code가 null이 아닌 데이터만 조회해줘
