@@ -78,7 +78,7 @@ where
             tbl_category
         where
             ref_category_code = 1
-        )
+        );
 
 -- all 연산자
 -- 서브쿼리의 결과 모두에 대해 연산결과가 참이면 참을 반환한다.
