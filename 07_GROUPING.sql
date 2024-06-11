@@ -8,7 +8,7 @@ select
 from
     tbl_menu
 group by
-    category_code
+    category_code;
 
 -- 카테고리 그룹에서 COUNT를 사용해서 갯수를 조회
 -- 카테고리별 갯수 조회하기
