@@ -87,9 +87,12 @@ group by
     menu_price,
     category_code
 having
-    category_code >= 5 and category_code <= 8;
+    category_code >= 5 and category_code <= 8
+order by
+    menu_price;
 
 -- where 절로도 할 수 있다.
+-- 그룹화 전에 필터링을 할 수 없는 경우에는 HAVING으로 만 가능하다.
 select
     menu_price,
     category_code
@@ -99,4 +102,44 @@ where
     category_code >=5 and category_code <= 8
 group by
     menu_price,
-    category_code;
+    category_code
+order by
+    menu_price;
+
+-- 카테고리 코드 그룹 별 평균 가격을 구하고, 평균 가격이 8000원 이상인 경우만 조회
+select
+    category_code,
+    avg(menu_price)
+from
+    tbl_menu
+group by
+    category_code
+having
+    avg(menu_price) >= 8000;
+
+/*
+WITH ROLLUP
+- GROUP BY에서 사용되는 확장기능으로 다양한 수준의 집계 데이터를 생성 할 수 있다.
+*/
+select
+    category_code,
+    sum(menu_price)
+from
+    tbl_menu
+group by
+    category_code
+with rollup;
+
+-- 칼럼 두개를 활용한 ROLLUP
+-- 메뉴 가격별 총합 및 해당 메뉴 가격별 같은 카테고리의 총합
+select
+    menu_price,
+    category_code,
+    count(*),
+    sum(menu_price)
+from
+    tbl_menu
+group by
+    menu_price,
+    category_code
+with rollup;
