@@ -78,3 +78,38 @@ from
 delete
 from tbl_menu
 where menu_code > 0;
+
+/*
+REPLACE
+-- REPLACE를 통해 중복된 데이터를 덮어 쓸 수 있다.
+-- 해당 행을 삭제하고 새로운 값을 삽입한다.
+
+-- INSERT 시 PRIMARY KEY(기본키) 또는 UNIQUE KEY 충돌이 발생할 수 있다.
+
+-- UPDATE 조건을 충족하는 모든 행을 수정 할 수 있지만,
+-- REPLACE무조건 한 행에 대해 수행만 가능하다
+*/
+
+/*
+PRIMARY KEY : 기본키, PK 유일성과 최소성을 충족한다. 해당 행을 식별할때 기준이되는 필수 키
+UNIQUE KEY : 테이블 내에서 유일성을 만족하는 키, 해당 행을 식별할때 사용 가능
+
+최소성 : 키를 구성하는 속성들 중 가장 최소로 필요한 속성들로만 키를 구성하는 성질
+유일성 : 여러개의 데이터가 존재할때, 각각의 행을 유일하게 식별가능한 조건
+*/
+
+select * from tbl_menu;
+-- [23000][1062] Duplicate entry '17' for key 'tbl_menu.PRIMARY'
+insert into tbl_menu values (17, '참기름소주', 5000, 10, 'Y');
+
+replace into tbl_menu values (17, '참기름소주', 5000, 10, 'Y');
+
+-- into 생략 가능
+replace tbl_menu values (17, '참기름맥주', 5000, 10, 'Y');
+
+replace tbl_menu
+set menu_code = 9,
+    menu_name = '딸기마카롱',
+    menu_price = 2000,
+    category_code = 9,
+    orderable_status = 'Y';
