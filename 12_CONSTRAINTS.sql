@@ -89,3 +89,118 @@ insert into user_primarykey
 (user_no, user_id, user_pwd, user_name, gender, phone, email)
 values (1, 'user01', 'pass01', '홍길동', '남', '010-1234-5678', 'hon123@gmail.com'),
        (2, 'user02', 'pass02', '유관순', '여', '010-7777-7777', 'yu77@gmail.com');
+
+-- 중복값 체크
+insert into user_primarykey
+(user_no, user_id, user_pwd, user_name, gender, phone, email)
+values (1, 'user01', 'pass01', '홍길동', '남', '010-1234-5678', 'hon123@gmail.com');
+
+
+-- FOREIGN KEY
+-- 참조된 다른 테이블에서 제공하는 값만 사용 할 수 있다.
+-- 참조 무결성을 위배하지 않기 위해 사용
+-- FOREIGN KEY 제약조건에 의해 테이블 간의 관계(RELATIONSHIP) 형성됨.
+-- 제공되는 값(참조하는 테이블의 값) 이외에는 NULL 사용 가능
+
+/*
+참조 무결성
+-> 키본키와 외래키 간의 관계가 항상 유지되도록 보장하는 것을 의미한다.
+*/
+
+--
+create table if not exists user_grade
+(
+    grade_code int not null unique,
+    grade_name varchar(255) not null
+) ENGINE = INNODB;
+
+insert into user_grade
+values(10, '일반회원'),
+      (20, '우수회원'),
+      (30, '특별회원');
+
+select * from user_grade;
+
+create table if not exists user_foreignkey1
+(
+    user_no int primary key,
+    user_id varchar(255) not null,
+    user_pwd varchar(255) not null,
+    user_name varchar(255) not null,
+    gender varchar(3),
+    phone varchar(255) not null,
+    email varchar(255),
+    grade_code int,
+    foreign key (grade_code)
+        references user_grade (grade_code)
+);
+
+insert into user_foreignkey1
+(user_no, user_id, user_pwd, user_name, gender, phone, email, grade_code)
+values (1, 'user01', 'pass01', '홍길동', '남', '010-1234-5678', 'hon123@gmail.com', 10),
+       (2, 'user02', 'pass02', '유관순', '여', '010-7777-7777', 'yu77@gmail.com', 20);
+
+
+-- 외래키 제약 조건
+-- 참조 컬럼에 없는 값 적용
+-- [23000][1452] Cannot add or update a child row: a foreign key constraint fails
+-- (`user_db`.`user_foreignkey1`, CONSTRAINT `user_foreignkey1_ibfk_1` FOREIGN KEY (`grade_code`) REFERENCES `user_grade` (`grade_code`))
+insert into user_foreignkey1
+(user_no, user_id, user_pwd, user_name, gender, phone, email, grade_code)
+values (3, 'user03', 'pass03', '이순신', '남', '010-4321-5678', 'lee222@gmail.com', 50);
+
+
+select * from user_foreignkey1;
+-- 참조 무결성에 의해 인반적으로는 관계가 맺어진 컬럼을 변경할 수 없다.
+-- [23000][1452] Cannot add or update a child row: a foreign key constraint fails
+-- (`user_db`.`user_foreignkey1`, CONSTRAINT `user_foreignkey1_ibfk_1` FOREIGN KEY (`grade_code`) REFERENCES `user_grade` (`grade_code`))
+update user_foreignkey1
+set grade_code = 5
+where user_no = 2;
+
+
+-- CHECK
+-- check 제약 조건을 위반시 혀용하지 않음
+
+create table if not exists user_check
+(
+    user_no int auto_increment primary key,
+    user_name varchar(255) not null,
+    gender varchar(255) check(gender in('남','여')), -- 조건
+    age int check (age >= 19) -- 조건
+);
+
+insert into user_check
+values (null, '홍길동','남',25),
+       (null, '이순신','남',35);
+
+select * from user_check;
+
+-- gender check 제약 조건 확인
+-- [HY000][3819] Check constraint 'user_check_chk_1' is violated. 발생
+insert into user_check
+values (null,'안중근','남자',27);
+
+-- age check 제약 조건 확인
+-- [HY000][3819] Check constraint 'user_check_chk_2' is violated. 발생
+insert into user_check
+values (null,'유관순','여',17);
+
+-- DEFAULT
+-- 컬럼에 null 대신 기본 값 적용
+-- 컬럼 타입이 DATE일 시, current_date 만 가능
+-- DATETIME일 시, current_time, current_timestamp, now() 모두 사용가능
+
+create table if not exists tbl_country
+(
+    country_code int auto_increment primary key,
+    country_name varchar(255) default '한국',
+    population varchar (255) default '0명',
+    add_day date default (current_date),
+    add_time datetime default (current_time)
+);
+
+insert into tbl_country
+values (null,default,default,default,default);
+
+select * from tbl_country;
